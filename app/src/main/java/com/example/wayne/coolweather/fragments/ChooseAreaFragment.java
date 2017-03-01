@@ -2,6 +2,7 @@ package com.example.wayne.coolweather.fragments;
 
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,7 +16,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.wayne.coolweather.MainActivity;
 import com.example.wayne.coolweather.R;
+import com.example.wayne.coolweather.WeatherActivity;
 import com.example.wayne.coolweather.db.City;
 import com.example.wayne.coolweather.db.County;
 import com.example.wayne.coolweather.db.Province;
@@ -83,6 +86,17 @@ public class ChooseAreaFragment extends Fragment {
                 }else if(currentLevel == LEVEL_CITY){
                     selectedCity = mCityList.get(postion);
                     queryCouties();
+                }else if (currentLevel == LEVEL_COUNTY){
+                    String weatherId = mCountyList.get(postion).getWeatherId();
+                    if (getActivity() instanceof MainActivity){
+                        gotoWeatherActivity(weatherId);
+                    }else if (getActivity() instanceof WeatherActivity){
+                        WeatherActivity activity = (WeatherActivity) getActivity();
+                        activity.drawerLayout.closeDrawers();
+                        activity.swipeRefresh.setRefreshing(true);
+                        activity.requestWeather(weatherId);
+                    }
+
                 }
 
             }
@@ -99,6 +113,10 @@ public class ChooseAreaFragment extends Fragment {
             }
         });
         queryPorvinces();
+    }
+
+    private void gotoWeatherActivity(String weatherId) {
+        WeatherActivity.startActivity(getActivity(),weatherId);
     }
 
     private void queryPorvinces() {

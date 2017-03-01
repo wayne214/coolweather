@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.wayne.coolweather.gson.Forecast;
 import com.example.wayne.coolweather.gson.Weather;
+import com.example.wayne.coolweather.service.AutoUpdateService;
 import com.example.wayne.coolweather.util.HttpUtils;
 import com.example.wayne.coolweather.util.Utility;
 
@@ -169,8 +170,14 @@ public class WeatherActivity extends AppCompatActivity {
 
         loadBingPic();
     }
-
+    //处理并展示Weather实体类中的数据
     private void showWeatherInfo(Weather weather) {
+        if (weather != null && "ok".equals(weather.status)){
+            Intent intent = new Intent(this, AutoUpdateService.class);
+            startService(intent);
+        }else{
+            Toast.makeText(this, "获取天气信息失败", Toast.LENGTH_SHORT).show();
+        }
         String cityName = weather.basic.cityName;
         String updateTime = weather.basic.update.updateTime.split(" ")[0];
         String degree = weather.now.temperature + "℃";
